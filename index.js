@@ -6,7 +6,9 @@ const app = express();
 app.get("/", (req, res) => {
   res.send("API online");
 });
-
+app.get("/", (req, res) => {
+  res.json({ status: "ok" });
+});
 app.get("/os", async (req, res) => {
 
   const browser = await puppeteer.launch({
