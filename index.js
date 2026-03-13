@@ -27,16 +27,14 @@ app.get("/os", async (req, res) => {
 
 console.log("Opening login page...");
 
-await page.goto("https://www.bling.com.br/login", {
+await page.goto("https://www.bling.com.br/Api/v3/oauth/login?env=production", {
   waitUntil: "domcontentloaded",
   timeout: 60000
 });
 
-console.log("Waiting login form...");
+console.log("Waiting login fields...");
 
-await page.waitForSelector('input.bling-item-form', {
-  timeout: 60000
-});
+await page.waitForSelector('input[name="login"]', { timeout: 60000 });
 
 console.log("Typing credentials...");
 
