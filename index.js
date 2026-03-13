@@ -25,30 +25,30 @@ app.get("/os", async (req, res) => {
 
     const page = await browser.newPage();
 
-    console.log("Opening login page...");
+console.log("Opening login page...");
 
-    await page.goto("https://www.bling.com.br/login", {
-      waitUntil: "domcontentloaded",
-      timeout: 60000
-    });
+await page.goto("https://www.bling.com.br/login", {
+  waitUntil: "domcontentloaded",
+  timeout: 60000
+});
 
-    console.log("Waiting login field...");
+console.log("Waiting login form...");
 
-    await page.waitForSelector('input[name="login"]', {
-      timeout: 30000
-    });
+await page.waitForSelector('input.bling-item-form', {
+  timeout: 60000
+});
 
-    console.log("Typing credentials...");
+console.log("Typing credentials...");
 
-    await page.fill('input[name="login"]', process.env.BLING_USER);
-    await page.fill('input[name="password"]', process.env.BLING_PASS);
+await page.fill('input[name="login"]', process.env.BLING_USER);
+await page.fill('input[name="password"]', process.env.BLING_PASS);
 
-    console.log("Submitting login...");
+console.log("Submitting login...");
 
-    await Promise.all([
-      page.click("button[type=submit]"),
-      page.waitForNavigation({ waitUntil: "domcontentloaded" })
-    ]);
+await Promise.all([
+  page.click("button[type=submit]"),
+  page.waitForNavigation({ waitUntil: "domcontentloaded" })
+]);
 
     console.log("Going to OS page...");
 
