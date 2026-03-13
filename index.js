@@ -30,3 +30,7 @@ app.get("/os", async (req, res) => {
 });
 
 app.listen(3000, () => console.log("running on port 3000"));
+
+app.get("/", (req, res) => {
+  res.json({ message: "Puppeteer scraper running", endpoint: "/os" });
+});
