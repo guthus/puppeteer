@@ -17,36 +17,28 @@ app.get("/os", async (req, res) => {
 
     const page = await browser.newPage();
     console.log("Navigating to login...");
-    await page.goto("https://www.bling.com.br/login", { timeout: 30000 });
+    await page.goto("https://www.bling.com.br/login", { waitUntil: "networkidle", timeout: 30000 });
     
-    console.log("Filling credentials...");
-    await page.fill('input[name="login"]', process.env.BLING_USER);
-    await page.fill('input[name="password"]', process.env.BLING_PASS);
+    console.log("Page loaded, taking screenshot...");
+    await page.screenshot({ path: "/tmp/login.png" });
     
-    console.log("Submitting form...");
-    await Promise.all([
-      page.click("button[type=submit]"),
-      page.waitForNavigation({ waitUntil: "domcontentloaded", timeout: 30000 })
-    ]);
-
-    console.log("Going to OS page...");
-    await page.goto("https://www.bling.com.br/ordem.servicos.php", { timeout: 30000 });
-    await page.waitForTimeout(3000);
-
-    const os = await page.evaluate(() => {
-      const linha = document.querySelector("table tbody tr");
-      if (!linha) {
-        return { erro: "Nenhuma OS encontrada" };
-      }
-      const colunas = linha.querySelectorAll("td");
-      return {
-        numero: colunas[1].innerText.trim(),
-        cliente: colunas[3].innerText.trim()
-      };
-    });
+    console.log("Getting page content...");
+    const content = await page.content();
+    console.log("HTML length:", content.length);
+    
+    // Log all input fields
+    const inputs = await page.locator("input").all();
+    console.log("Found inputs:", inputs.length);
+    
+    for (let i = 0; i < inputs.length; i++) {
+      const type = await inputs[i].getAttribute("type");
+      const name = await inputs[i].getAttribute("name");
+      const id = await inputs[i].getAttribute("id");
+      console.log(`Input ${i}: type=${type}, name=${name}, id=${id}`);
+    }
 
     await browser.close();
-    res.json(os);
+    res.json({ debug: "Check logs" });
   } catch (err) {
     console.error("Error:", err.message);
     if (browser) await browser.close();
