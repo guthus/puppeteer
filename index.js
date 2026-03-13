@@ -1,13 +1,16 @@
+
+
+
 const express = require("express");
 const puppeteer = require("puppeteer");
 const app = express();
 
 app.get("/os", async (req, res) => {
   try {
-    const browser = await puppeteer.launch({
-      executablePath: "/usr/bin/chromium-browser",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"]
-    });
+const browser = await puppeteer.launch({
+  executablePath: "/usr/bin/chromium",
+  args: ["--no-sandbox", "--disable-setuid-sandbox"]
+});
     const page = await browser.newPage();
     await page.goto("https://www.bling.com.br/login");
     await page.type("#login", process.env.BLING_USER);

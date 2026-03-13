@@ -1,9 +1,4 @@
-FROM node:18-bullseye
-
-# Install Chromium
-RUN apt-get update && \
-    apt-get install -y chromium-browser && \
-    rm -rf /var/lib/apt/lists/*
+FROM mcr.microsoft.com/playwright:v1.40.0-focal
 
 WORKDIR /app
 
