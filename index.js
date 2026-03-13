@@ -7,29 +7,36 @@ app.get("/", (req, res) => {
 });
 
 app.get("/os", async (req, res) => {
-  const browser = await chromium.launch({
-    headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-      "--disable-gpu"
-    ]
-  });
-
   try {
+    console.log("Starting browser...");
+    const browser = await chromium.launch({
+      headless: true,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu"
+      ]
+    });
+
+    console.log("Browser started, opening page...");
     const page = await browser.newPage();
-    await page.goto("https://www.bling.com.br/login");
-    await page.waitForSelector('input[name="login"]');
+    
+    console.log("Navigating to login...");
+    await page.goto("https://www.bling.com.br/login", { timeout: 30000 });
+    
+    console.log("Filling credentials...");
     await page.fill('input[name="login"]', process.env.BLING_USER);
     await page.fill('input[name="password"]', process.env.BLING_PASS);
     
+    console.log("Submitting form...");
     await Promise.all([
       page.click("button[type=submit]"),
-      page.waitForNavigation({ waitUntil: "domcontentloaded" })
+      page.waitForNavigation({ waitUntil: "domcontentloaded", timeout: 30000 })
     ]);
 
-    await page.goto("https://www.bling.com.br/ordem.servicos.php");
+    console.log("Going to OS page...");
+    await page.goto("https://www.bling.com.br/ordem.servicos.php", { timeout: 30000 });
     await page.waitForTimeout(5000);
 
     const os = await page.evaluate(() => {
@@ -47,8 +54,8 @@ app.get("/os", async (req, res) => {
     await browser.close();
     res.json(os);
   } catch (err) {
-    await browser.close();
-    res.json({ erro: err.message });
+    console.error("Error:", err.message);
+    res.status(500).json({ erro: err.message });
   }
 });
 
