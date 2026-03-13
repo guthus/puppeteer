@@ -17,20 +17,21 @@ app.get("/os", async (req, res) => {
 
     const page = await browser.newPage();
     console.log("Navigating to login...");
-    await page.goto("https://www.bling.com.br/login", { waitUntil: "networkidle", timeout: 30000 });
+    await page.goto("https://www.bling.com.br/login", { waitUntil: "networkidle", timeout: 60000 });
+    
+    console.log("Waiting for username field...");
+    await page.waitForSelector("#username", { timeout: 30000 });
     
     console.log("Filling credentials...");
-    await page.fill("#username", process.env.BLING_USER);
-    await page.fill("input[type=password]", process.env.BLING_PASS);
+    await page.fill("#username", process.env.BLING_USER, { timeout: 10000 });
+    await page.fill("input[type=password]", process.env.BLING_PASS, { timeout: 10000 });
     
     console.log("Submitting form...");
-    await Promise.all([
-      page.click("button[type=submit]"),
-      page.waitForNavigation({ waitUntil: "domcontentloaded", timeout: 30000 })
-    ]);
+    await page.click("button[type=submit]");
+    await page.waitForNavigation({ waitUntil: "domcontentloaded", timeout: 60000 });
 
     console.log("Going to OS page...");
-    await page.goto("https://www.bling.com.br/ordem.servicos.php", { timeout: 30000 });
+    await page.goto("https://www.bling.com.br/ordem.servicos.php", { timeout: 60000 });
     await page.waitForTimeout(3000);
 
     const os = await page.evaluate(() => {
