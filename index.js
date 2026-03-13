@@ -8,7 +8,6 @@ const app = express();
 app.get("/os", async (req, res) => {
   try {
 const browser = await puppeteer.launch({
-  executablePath: "/usr/bin/chromium",
   args: ["--no-sandbox", "--disable-setuid-sandbox"]
 });
     const page = await browser.newPage();
